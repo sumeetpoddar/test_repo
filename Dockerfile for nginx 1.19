@@ -1,0 +1,17 @@
+#Dockerfile for nginx 1.19
+#Write a Dockerfile to run nginx version 1.19 in a container. Choose a base image, considering security best practices, and aim for the image to pass a container image security test
+
+
+# Use a minimal and secure base image
+FROM nginx:1.19-alpine
+
+# Set secure permissions
+RUN chmod -R 644 /usr/share/nginx/html && \
+    chmod -R 700 /var/cache/nginx && \
+    chmod -R 700 /var/log/nginx
+
+# Expose port
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
