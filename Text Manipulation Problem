@@ -1,0 +1,27 @@
+#Text Manipulation Problem
+#Choose or create a text manipulation problem that involves using awk, sed, tr, and/or grep. Solve the problem, considering efficiency and readability.
+
+
+#Task: Process and Format Employee Data
+#store the Input File with the name employees.txt and store the below data 
+
+# ID: 101, Name: John Doe, Age: 25, Role: Developer
+# ID: 102, Name: Jane Smith, Age: 30, Role: Manager
+# ID: 103, Name: Alice Brown, Age: 22, Role: Intern
+# ID: 104, Name: Bob Johnson, Age: 28, Role: Developer
+
+
+# Question 1: Extract only Name and Role.
+
+# Question 2: Replace "Developer" with "DEV", "Manager" with "MGR", and "Intern" with "INT".
+
+# Question 3: Convert all text to uppercase.
+
+# Question 4: Show only names that start with "J" using grep.
+
+#Solution Using awk, sed, tr, and grep
+
+awk -F', ' '{print $2, $4}' employees.txt | \
+sed -E 's/Developer/DEV/; s/Manager/MGR/; s/Intern/INT/' | \
+tr '[:lower:]' '[:upper:]' | \
+grep "^J"
