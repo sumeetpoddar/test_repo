@@ -1,0 +1,33 @@
+# Sum of Even Fibonacci Numbers
+# Write a program in a Object Orientated Programming language of your choice to calculate the sum of the first 100 even-valued Fibonacci numbers. Consider efficiency and demonstrate good coding practices.
+
+# I have used here python with OOPs
+
+
+class EvenFibonacciSum:
+    def __init__(self, count):
+        """Initialize the class with the number of even Fibonacci numbers to sum."""
+        self.count = count
+
+    def generate_even_fibonacci(self):
+        """Generate the first `count` even Fibonacci numbers efficiently."""
+        even_fibs = []
+        a, b = 0, 1  # First two Fibonacci numbers
+
+        while len(even_fibs) < self.count:
+            a, b = b, a + b  # Standard Fibonacci generation
+            if a % 2 == 0:   # Keep only even numbers
+                even_fibs.append(a)
+
+        return even_fibs
+
+    def calculate_sum(self):
+        """Calculate and return the sum of the first `count` even Fibonacci numbers."""
+        even_fibs = self.generate_even_fibonacci()
+        return sum(even_fibs)
+
+# Running the program
+if __name__ == "__main__":
+    fib_calculator = EvenFibonacciSum(100)  # Create an instance
+    total_sum = fib_calculator.calculate_sum()  # Calculate sum
+    print(f"Sum of the first 100 even Fibonacci numbers: {total_sum}")
