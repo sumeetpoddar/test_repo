@@ -1,0 +1,102 @@
+# Text Manipulation with an Object Orientated Programming Language - Python
+# Solve the text manipulation problem from the previous question using any Object Orientated Programming language of your choice. Provide a clear and well-documented solution.
+
+
+import re  # Importing regex module for pattern matching
+
+class EmployeeDataProcessor:
+    """
+    A class to process employee data from a file.
+    """
+    def __init__(self, filename):
+        """
+        Initializes the class with the file name.
+        :param filename: Name of the file containing employee data
+        """
+        self.filename = filename
+
+    def read_file(self):
+        """
+        Reads the employee data from the file and returns it as a list of lines.
+        :return: List of employee data lines
+        """
+        try:
+            with open(self.filename, 'r') as file:
+                return file.readlines()  # Read all lines and return as a list
+        except FileNotFoundError:
+            print(f"Error: File '{self.filename}' not found!")  # Handle missing file error
+            return []
+
+    def extract_name_and_role(self, data):
+        """
+        Extracts only Name and Role from each line.
+        :param data: List of employee records
+        :return: List containing only Name and Role
+        """
+        extracted_data = []
+        pattern = r"Name: (.*?), .*Role: (.*?)$"  # Regex pattern to find Name and Role
+
+        for line in data:
+            match = re.search(pattern, line)  # Search for Name and Role in each line
+            if match:
+                extracted_data.append(f"{match.group(1)} {match.group(2)}")  # Store formatted Name and Role
+        return extracted_data
+
+    def replace_roles(self, data):
+        """
+        Replaces Role names:
+        Developer → DEV, Manager → MGR, Intern → INT.
+        :param data: List of employee Name and Role
+        :return: List with replaced roles
+        """
+        role_mappings = {"Developer": "DEV", "Manager": "MGR", "Intern": "INT"}  # Role dictionary
+
+        return [
+            re.sub(r"\b(Developer|Manager|Intern)\b", lambda x: role_mappings[x.group()], line)
+            for line in data
+        ]
+
+    def convert_to_uppercase(self, data):
+        """
+        Converts all text to uppercase.
+        :param data: List of employee Name and Role
+        :return: List with text in uppercase
+        """
+        return [line.upper() for line in data]  # Convert each line to uppercase
+
+    def filter_names_starting_with_j(self, data):
+        """
+        Filters names that start with 'J'.
+        :param data: List of employee Name and Role
+        :return: Filtered list with names starting with 'J'
+        """
+        return [line for line in data if line.startswith("J")]  # Keep only names starting with 'J'
+
+    def process_data(self):
+        """
+        Processes the data step by step:
+        - Reads file
+        - Extracts Name and Role
+        - Replaces Role Names
+        - Converts to Uppercase
+        - Filters names starting with 'J'
+        :return: Processed employee data list
+        """
+        data = self.read_file()  # Read data from file
+        if not data:
+            return []  # Return empty list if file is missing
+
+        data = self.extract_name_and_role(data)  # Extract Name and Role
+        data = self.replace_roles(data)  # Replace Role names
+        data = self.convert_to_uppercase(data)  # Convert text to uppercase
+        data = self.filter_names_starting_with_j(data)  # Filter names starting with 'J'
+        return data  # Return the final processed data
+
+# Run the program
+if __name__ == "__main__":  
+    processor = EmployeeDataProcessor("employees.txt")  # Create an instance of EmployeeDataProcessor
+    result = processor.process_data()  # Call process_data() to get the final output
+
+    # Print the final output
+    for line in result:
+        print(line)  # Display each processed line
