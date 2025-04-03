@@ -1,0 +1,38 @@
+# Intersection of Sorted Arrays
+# Write a function in a Object Orientated Programming language of your choice that takes two sorted arrays of integers as input and returns an array containing numbers common to both arrays without duplicates.
+
+# I am using python with OOPs here
+# Since the arrays are sorted, we can use a two-pointer technique to efficiently find common elements in O(n) time complexity.
+
+class ArrayIntersection:
+    def __init__(self, arr1, arr2):
+        """Initialize the class with two sorted arrays."""
+        self.arr1 = arr1
+        self.arr2 = arr2
+
+    def find_intersection(self):
+        """Finds the common elements in both sorted arrays without duplicates."""
+        i, j = 0, 0  # Two pointers for both arrays
+        intersection = []
+
+        while i < len(self.arr1) and j < len(self.arr2):
+            if self.arr1[i] == self.arr2[j]:  # If elements match
+                if not intersection or intersection[-1] != self.arr1[i]:  # Avoid duplicates
+                    intersection.append(self.arr1[i])
+                i += 1
+                j += 1
+            elif self.arr1[i] < self.arr2[j]:  # Move the pointer in the smaller array
+                i += 1
+            else:
+                j += 1
+
+        return intersection
+
+# Example Usage
+if __name__ == "__main__":
+    arr1 = [1, 2, 4, 5, 6, 8, 9]
+    arr2 = [2, 4, 6, 8, 10]
+
+    finder = ArrayIntersection(arr1, arr2)  # Create an instance of the class
+    result = finder.find_intersection()  # Find intersection
+    print("Common elements without duplicates:", result)
