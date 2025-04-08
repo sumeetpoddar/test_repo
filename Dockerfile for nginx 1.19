@@ -10,6 +10,9 @@ RUN chmod -R 644 /usr/share/nginx/html && \
     chmod -R 700 /var/cache/nginx && \
     chmod -R 700 /var/log/nginx
 
+# Switch to non-root user provided by the image
+USER nginx
+
 # Expose port
 EXPOSE 80
 
