@@ -1,13 +1,33 @@
 #Kubernetes StatefulSet
 #Write a Kubernetes StatefulSet to deploy the nginx container from the previous question. Utilize persistent volume claims and define resource limits for optimal performance.
 
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: web-app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  namespace: web-app
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  clusterIP: None  # Headless service
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: nginx-statefulset
+  namespace: web-app
 spec:
   serviceName: nginx-service
-  replicas: 2  # Number of Nginx instances
+  replicas: 2
   selector:
     matchLabels:
       app: nginx
@@ -16,23 +36,42 @@ spec:
       labels:
         app: nginx
     spec:
+      securityContext:
+        fsGroup: 2000  # Group ownership for mounted volumes
       containers:
       - name: nginx
-        image: nginx:1.19-alpine  # We can use the image built from the last problem statement
+        image: nginx:1.19-alpine
         ports:
         - containerPort: 80
         volumeMounts:
         - name: nginx-persistent-storage
-          mountPath: /usr/share/nginx/html  # Mount for serving static files
+          mountPath: /usr/share/nginx/html
         - name: nginx-logs
-          mountPath: /var/log/nginx  # Mount logs directory
+          mountPath: /var/log/nginx
         resources:
           requests:
-            cpu: "250m"   # Requests 250 millicores of CPU
-            memory: "256Mi"  # Requests 256MB RAM
+            cpu: "250m"
+            memory: "256Mi"
           limits:
-            cpu: "500m"   # Max CPU 500 millicores
-            memory: "512Mi"  # Max Memory 512MB
+            cpu: "500m"
+            memory: "512Mi"
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 3000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20
   volumeClaimTemplates:
   - metadata:
       name: nginx-persistent-storage
@@ -40,24 +79,11 @@ spec:
       accessModes: ["ReadWriteOnce"]
       resources:
         requests:
-          storage: 1Gi  # 1GB storage for static content
+          storage: 1Gi
   - metadata:
       name: nginx-logs
     spec:
       accessModes: ["ReadWriteOnce"]
       resources:
         requests:
-          storage: 500Mi  # 500MB storage for logs
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nginx-service
-spec:
-  selector:
-    app: nginx
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-  clusterIP: None  # Headless service for StatefulSet
+          storage: 500Mi
